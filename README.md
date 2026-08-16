@@ -30,7 +30,7 @@ A Home Assistant custom component for monitoring cross-country ski trail conditi
 2. Click on "Integrations"
 3. Click the three dots in the top right corner
 4. Select "Custom repositories"
-5. Add this repository URL: `https://github.com/yourusername/home-assistant-sporet`
+5. Add this repository URL: `https://github.com/toringer/home-assistant-sporet`
 6. Select "Integration" as the category
 7. Click "Add"
 8. Find "Sporet" in the HACS integration list and click "Download"
@@ -279,8 +279,8 @@ This integration includes a development container for easy testing:
 ## Support
 
 For issues, feature requests, or contributions:
-- GitHub Issues: [Create an issue](https://github.com/yourusername/home-assistant-sporet/issues)
-- Discussions: [Join the discussion](https://github.com/yourusername/home-assistant-sporet/discussions)
+- GitHub Issues: [Create an issue](https://github.com/toringer/home-assistant-sporet/issues)
+- Discussions: [Join the discussion](https://github.com/toringer/home-assistant-sporet/discussions)
 
 ## License
 

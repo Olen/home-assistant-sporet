@@ -7,10 +7,12 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry, ConfigSubentry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import SporetAPI, SporetAPIError
-from .const import CONF_BEARER_TOKEN, CONF_IS_SEGMENT, CONF_SLOPE_ID, DOMAIN, UPDATE_INTERVAL_SECONDS
+from .auth import SporetAuth, SporetAuthError
+from .const import CONF_IS_SEGMENT, CONF_SLOPE_ID, DOMAIN, UPDATE_INTERVAL_SECONDS
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -27,7 +29,6 @@ class SporetDataUpdateCoordinator(DataUpdateCoordinator):
         subentry: ConfigSubentry,
     ) -> None:
         """Initialize."""
-        self._bearer_token = config_entry.data[CONF_BEARER_TOKEN]
         self.slope_id = subentry.data[CONF_SLOPE_ID]
         self.is_segment = subentry.data[CONF_IS_SEGMENT]
         super().__init__(
@@ -42,7 +43,8 @@ class SporetDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from Sporet."""
         session = async_get_clientsession(self.hass)
-        api = SporetAPI(session, self._bearer_token)
+        auth = SporetAuth(self.hass, session, self.config_entry)
+        api = SporetAPI(session, auth)
 
         try:
             if self.is_segment:
@@ -76,6 +78,10 @@ class SporetDataUpdateCoordinator(DataUpdateCoordinator):
                 "prepped_by": data.get("preppedBy", []),
             }
 
+        except SporetAuthError as err:
+            # Ask the user to sign in again rather than retrying forever - an
+            # expired token never fixes itself.
+            raise ConfigEntryAuthFailed(str(err)) from err
         except SporetAPIError as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err
 

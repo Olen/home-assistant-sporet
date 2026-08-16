@@ -56,11 +56,47 @@ Before setting up the integration, you need:
    - Extract the slope id from the copied URL
 
 
-2. **Bearer Token**:
-   - Log in to sporet.no
-   - Open the network anaylser in the developer tools of the browser
-   - Find the `details` traffic, find the `authorization` attribute in the header section
-   - Copy the token
+2. **Token**:
+
+   Log in to sporet.no, then copy the value your browser stored under the key
+   `oidc.user:https://login.sporet.no:geodata-public`. Either way below gives the
+   same thing - use whichever you find easier.
+
+   **From the Local Storage view** (no typing):
+
+   - Open the developer tools (F12) and go to **Application** (Chrome/Edge) or
+     **Storage** (Firefox)
+   - Open **Local Storage** > **https://sporet.no**
+   - Click the row whose name starts with `oidc.user:`
+   - Right-click the value and choose **Copy value** - or click into the value
+     pane and select all of it
+
+   **From the console** (one line):
+
+   - Open the developer tools (F12) and go to **Console**
+   - Run:
+
+     ```js
+     copy(localStorage['oidc.user:https://login.sporet.no:geodata-public'])
+     ```
+
+   - The value is now on your clipboard; the console prints `undefined`, which is
+     expected - `copy()` returns nothing
+
+   Paste the result into the **Token** field. It is a few kilobytes of JSON, which
+   is normal.
+
+   That single value holds both the access token **and a refresh token**, and the
+   integration keeps the access token alive on its own - so this only has to be
+   done once. Signing out of sporet.no in your browser does not disconnect Home
+   Assistant; it keeps its own token from then on.
+
+<details>
+<summary>Copying the bearer token by hand instead</summary>
+
+You can still paste a plain bearer token, taken from the `authorization` header of
+any request to `https://api.sporet.no` in the network tab. It works, but it expires
+after 30 days, and Home Assistant will then ask you to sign in again.
 
 > [!IMPORTANT]
 > Make sure you copy the entire token!
@@ -70,8 +106,10 @@ Before setting up the integration, you need:
 
 Another option is to right click on one of the requests to `https://api.sporet.no` and look for
 **Copy Request Headers**, or **Copy as Curl** or something similar.  Paste the result into
-a plain text file and find the line starting with `Authorization:`.  Copy the entire line and 
-paste it into the Bearer Token field below.
+a plain text file and find the line starting with `Authorization:`.  Copy the entire line and
+paste it into the Token field below.
+
+</details>
 
 
 ### Setup Steps
@@ -80,7 +118,7 @@ paste it into the Bearer Token field below.
 2. Click **+ Add Integration**
 3. Search for "Sporet"
 4. Enter your configuration:
-   - **Bearer Token**: Your API authentication token
+   - **Token**: The value you copied above
 5. Click **Submit**
 
 The integration will validate your credentials.

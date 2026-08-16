@@ -3,7 +3,14 @@
         "step": {
             "user": {
                 "title": "Sett opp Sporet",
-                "description": "Hent bearer token fra nettleseren din.",
+                "description": "Åpne sporet.no i nettleseren og logg inn. Åpne utviklerverktøyet (F12), gå til Application > Local Storage > sporet.no, klikk raden som starter med {storage_key}, og kopier verdien. Lim den inn under - den inneholder en refresh-token, så dette trenger du bare gjøre én gang.",
+                "data": {
+                    "bearer_token": "Bearer Token"
+                }
+            },
+            "reauth_confirm": {
+                "title": "Logg inn på Sporet igjen",
+                "description": "Den lagrede innloggingen er ikke gyldig lenger. Åpne sporet.no i nettleseren og logg inn. Åpne utviklerverktøyet (F12), gå til Application > Local Storage > sporet.no, klikk raden som starter med {storage_key}, og kopier verdien. Lim den inn under - den inneholder en refresh-token, så dette trenger du bare gjøre én gang.",
                 "data": {
                     "bearer_token": "Bearer Token"
                 }
@@ -15,7 +22,8 @@
             "unknown": "Uventet feil oppstod. Vennligst sjekk loggene for mer informasjon."
         },
         "abort": {
-            "already_configured": "Sporet.no er allerede konfigurert."
+            "already_configured": "Sporet.no er allerede konfigurert.",
+            "reauth_successful": "Sporet er logget inn igjen."
         }
     },
     "config_subentries": {

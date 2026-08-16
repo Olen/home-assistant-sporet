@@ -1,7 +1,7 @@
 [![home-assistant-sporet](https://img.shields.io/github/release/toringer/home-assistant-sporet.svg?1)](https://github.com/toringer/home-assistant-sporet)
 [![Validate with hassfest](https://github.com/toringer/home-assistant-sporet/workflows/Validate%20with%20hassfest/badge.svg)](https://github.com/toringer/home-assistant-sporet/actions/workflows/hassfest.yaml)
 [![HACS Validation](https://github.com/toringer/home-assistant-sporet/actions/workflows/validate_hacs.yaml/badge.svg)](https://github.com/toringer/home-assistant-sporet/actions/workflows/validate_hacs.yaml)
-[![Maintenance](https://img.shields.io/maintenance/yes/2025.svg)](https://github.com/toringer/home-assistant-sporet)
+[![Maintenance](https://img.shields.io/maintenance/yes/2026.svg)](https://github.com/toringer/home-assistant-sporet)
 [![home-assistant-sporet_downloads](https://img.shields.io/github/downloads/toringer/home-assistant-sporet/total)](https://github.com/toringer/home-assistant-sporet)
 [![home-assistant-sporet_downloads](https://img.shields.io/github/downloads/toringer/home-assistant-sporet/latest/total)](https://github.com/toringer/home-assistant-sporet)
 

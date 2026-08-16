@@ -26,6 +26,10 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+# Shown in the setup and reauth forms. Kept out of the translation strings
+# because hassfest rejects URLs there.
+COPY_COMMAND = "copy(localStorage['oidc.user:https://login.sporet.no:geodata-public'])"
+
 
 def parse_credentials(pasted: str) -> dict[str, str | None]:
     """Work out the tokens from whatever the user pasted.
@@ -176,6 +180,7 @@ class SporetConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user",
             data_schema=data_schema,
+            description_placeholders={"copy_command": COPY_COMMAND},
             errors=errors,
         )
 
@@ -220,6 +225,7 @@ class SporetConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="reauth_confirm",
             data_schema=vol.Schema({vol.Required(CONF_BEARER_TOKEN): str}),
+            description_placeholders={"copy_command": COPY_COMMAND},
             errors=errors,
         )
 

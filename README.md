@@ -57,19 +57,39 @@ Before setting up the integration, you need:
 
 
 2. **Token**:
-   - Log in to sporet.no
-   - Open the browser console (F12) and run:
+
+   Log in to sporet.no, then copy the value your browser stored under the key
+   `oidc.user:https://login.sporet.no:geodata-public`. Either way below gives the
+   same thing - use whichever you find easier.
+
+   **From the Local Storage view** (no typing):
+
+   - Open the developer tools (F12) and go to **Application** (Chrome/Edge) or
+     **Storage** (Firefox)
+   - Open **Local Storage** > **https://sporet.no**
+   - Click the row whose name starts with `oidc.user:`
+   - Right-click the value and choose **Copy value** - or click into the value
+     pane and select all of it
+
+   **From the console** (one line):
+
+   - Open the developer tools (F12) and go to **Console**
+   - Run:
 
      ```js
      copy(localStorage['oidc.user:https://login.sporet.no:geodata-public'])
      ```
 
-   - Paste the result into the **Token** field
+   - The value is now on your clipboard; the console prints `undefined`, which is
+     expected - `copy()` returns nothing
+
+   Paste the result into the **Token** field. It is a few kilobytes of JSON, which
+   is normal.
 
    That single value holds both the access token **and a refresh token**, and the
    integration keeps the access token alive on its own - so this only has to be
-   done once. `copy()` puts the whole thing on the clipboard, so there is nothing
-   to truncate either.
+   done once. Signing out of sporet.no in your browser does not disconnect Home
+   Assistant; it keeps its own token from then on.
 
 <details>
 <summary>Copying the bearer token by hand instead</summary>

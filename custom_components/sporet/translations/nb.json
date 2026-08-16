@@ -3,7 +3,14 @@
         "step": {
             "user": {
                 "title": "Sett opp Sporet",
-                "description": "Hent bearer token fra nettleseren din.",
+                "description": "Logg inn på sporet.no, åpne konsollen i nettleseren (F12) og kjør `copy(localStorage['oidc.user:https://login.sporet.no:geodata-public'])`. Lim inn resultatet under - det inneholder en refresh-token, så dette trenger du bare gjøre én gang.",
+                "data": {
+                    "bearer_token": "Bearer Token"
+                }
+            },
+            "reauth_confirm": {
+                "title": "Logg inn på Sporet igjen",
+                "description": "Den lagrede innloggingen er ikke gyldig lenger. Logg inn på sporet.no, åpne konsollen i nettleseren (F12) og kjør `copy(localStorage['oidc.user:https://login.sporet.no:geodata-public'])`. Lim inn resultatet under - det inneholder en refresh-token, så dette trenger du bare gjøre én gang.",
                 "data": {
                     "bearer_token": "Bearer Token"
                 }
@@ -15,7 +22,8 @@
             "unknown": "Uventet feil oppstod. Vennligst sjekk loggene for mer informasjon."
         },
         "abort": {
-            "already_configured": "Sporet.no er allerede konfigurert."
+            "already_configured": "Sporet.no er allerede konfigurert.",
+            "reauth_successful": "Sporet er logget inn igjen."
         }
     },
     "config_subentries": {

@@ -56,11 +56,27 @@ Before setting up the integration, you need:
    - Extract the slope id from the copied URL
 
 
-2. **Bearer Token**:
+2. **Token**:
    - Log in to sporet.no
-   - Open the network anaylser in the developer tools of the browser
-   - Find the `details` traffic, find the `authorization` attribute in the header section
-   - Copy the token
+   - Open the browser console (F12) and run:
+
+     ```js
+     copy(localStorage['oidc.user:https://login.sporet.no:geodata-public'])
+     ```
+
+   - Paste the result into the **Token** field
+
+   That single value holds both the access token **and a refresh token**, and the
+   integration keeps the access token alive on its own - so this only has to be
+   done once. `copy()` puts the whole thing on the clipboard, so there is nothing
+   to truncate either.
+
+<details>
+<summary>Copying the bearer token by hand instead</summary>
+
+You can still paste a plain bearer token, taken from the `authorization` header of
+any request to `https://api.sporet.no` in the network tab. It works, but it expires
+after 30 days, and Home Assistant will then ask you to sign in again.
 
 > [!IMPORTANT]
 > Make sure you copy the entire token!
@@ -70,8 +86,10 @@ Before setting up the integration, you need:
 
 Another option is to right click on one of the requests to `https://api.sporet.no` and look for
 **Copy Request Headers**, or **Copy as Curl** or something similar.  Paste the result into
-a plain text file and find the line starting with `Authorization:`.  Copy the entire line and 
-paste it into the Bearer Token field below.
+a plain text file and find the line starting with `Authorization:`.  Copy the entire line and
+paste it into the Token field below.
+
+</details>
 
 
 ### Setup Steps
@@ -80,7 +98,7 @@ paste it into the Bearer Token field below.
 2. Click **+ Add Integration**
 3. Search for "Sporet"
 4. Enter your configuration:
-   - **Bearer Token**: Your API authentication token
+   - **Token**: The value you copied above
 5. Click **Submit**
 
 The integration will validate your credentials.

@@ -3,7 +3,14 @@
     "step": {
       "user": {
         "title": "Set up Sporet",
-        "description": "Extract the bearer token from your browser.",
+        "description": "Sign in at sporet.no, then open the browser console (F12) and run `copy(localStorage['oidc.user:https://login.sporet.no:geodata-public'])`. Paste the result below - it contains a refresh token, so this only has to be done once.",
+        "data": {
+          "bearer_token": "Bearer Token"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in to Sporet again",
+        "description": "The saved login is no longer valid. Sign in at sporet.no, then open the browser console (F12) and run `copy(localStorage['oidc.user:https://login.sporet.no:geodata-public'])`. Paste the result below - it contains a refresh token, so this only has to be done once.",
         "data": {
           "bearer_token": "Bearer Token"
         }
@@ -15,14 +22,15 @@
       "unknown": "Unexpected error occurred. Please check the logs for more details."
     },
     "abort": {
-      "already_configured": "Sporet.no is already configured."
+      "already_configured": "Sporet.no is already configured.",
+      "reauth_successful": "Sporet is signed in again."
     }
   },
   "config_subentries": {
     "slope": {
       "entry_type": "Slopes and segments",
       "initiate_flow": {
-          "user": "Add new slope or segment"
+        "user": "Add new slope or segment"
       },
       "step": {
         "user": {

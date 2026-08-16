@@ -1,6 +1,8 @@
 """Config flow for Sporet integration."""
 
+import json
 import logging
+from collections.abc import Mapping
 from typing import Any
 
 import aiohttp
@@ -17,6 +19,7 @@ from .const import (
     API_SEGMENT_URL,
     CONF_BEARER_TOKEN,
     CONF_IS_SEGMENT,
+    CONF_REFRESH_TOKEN,
     CONF_SLOPE_ID,
     DOMAIN,
 )
@@ -24,14 +27,35 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
-def sanitize_bearer_token(bearer_token: str) -> str:
-    """Handle various permutations of the bearer token."""
-    bearer_token = " ".join(bearer_token.strip().split())
+def parse_credentials(pasted: str) -> dict[str, str | None]:
+    """Work out the tokens from whatever the user pasted.
+
+    The web app keeps its whole token set in a single localStorage key,
+    `oidc.user:https://login.sporet.no:geodata-public`. Pasting that JSON is
+    both easier than digging a header out of the network tab and the only way
+    to get the refresh token, which is what stops the access token expiring
+    after 30 days. A bare token still works, with or without a `Bearer`
+    prefix or the whole `authorization:` header line.
+    """
+    pasted = pasted.strip()
+
+    if pasted.startswith("{"):
+        try:
+            stored = json.loads(pasted)
+        except ValueError:
+            stored = {}
+        if access_token := stored.get("access_token"):
+            return {
+                CONF_BEARER_TOKEN: access_token,
+                CONF_REFRESH_TOKEN: stored.get("refresh_token"),
+            }
+
+    bearer_token = " ".join(pasted.split())
     if bearer_token.lower().startswith("authorization"):
         bearer_token = bearer_token.split(" ")[2].strip()
     if bearer_token.lower().startswith("bearer"):
         bearer_token = bearer_token.split(" ")[1].strip()
-    return bearer_token
+    return {CONF_BEARER_TOKEN: bearer_token, CONF_REFRESH_TOKEN: None}
 
 
 def sanitize_slope_id(slope_id: str) -> str:
@@ -120,7 +144,7 @@ class SporetConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            user_input[CONF_BEARER_TOKEN] = sanitize_bearer_token(user_input[CONF_BEARER_TOKEN])
+            user_input.update(parse_credentials(user_input[CONF_BEARER_TOKEN]))
 
             try:
                 # Test with a "dummy" slope ID
@@ -155,6 +179,50 @@ class SporetConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
+    async def async_step_reauth(
+        self, entry_data: Mapping[str, Any]
+    ) -> FlowResult:
+        """Handle credentials that no longer work."""
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Ask for a new token and put the entry back to work."""
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            credentials = parse_credentials(user_input[CONF_BEARER_TOKEN])
+
+            try:
+                # Test with a "dummy" slope ID
+                await validate_input(
+                    self.hass,
+                    bearer_token=credentials[CONF_BEARER_TOKEN],
+                    slope_id=10000,
+                )
+            except CannotConnect:
+                errors["base"] = "cannot_connect"
+            except InvalidAuth:
+                errors["base"] = "invalid_auth"
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.exception("Unexpected exception")
+                errors["base"] = "unknown"
+            else:
+                # Replace both tokens: a refresh token stored alongside a
+                # rejected access token is spent too, and keeping it would
+                # only fail again on the next refresh.
+                return self.async_update_reload_and_abort(
+                    self._get_reauth_entry(),
+                    data_updates=credentials,
+                )
+
+        return self.async_show_form(
+            step_id="reauth_confirm",
+            data_schema=vol.Schema({vol.Required(CONF_BEARER_TOKEN): str}),
+            errors=errors,
+        )
+
     @staticmethod
     @callback
     def async_get_options_flow(
@@ -184,7 +252,7 @@ class SporetOptionsFlowHandler(config_entries.OptionsFlow):
 
         if user_input is not None:
             # Validate the new bearer token
-            user_input[CONF_BEARER_TOKEN] = sanitize_bearer_token(user_input[CONF_BEARER_TOKEN])
+            user_input.update(parse_credentials(user_input[CONF_BEARER_TOKEN]))
 
             try:
                 # Test with a "dummy" slope ID
@@ -201,7 +269,9 @@ class SporetOptionsFlowHandler(config_entries.OptionsFlow):
                 self.hass.config_entries.async_update_entry(
                     self.config_entry,
                     data={
+                        **self.config_entry.data,
                         CONF_BEARER_TOKEN: user_input[CONF_BEARER_TOKEN],
+                        CONF_REFRESH_TOKEN: user_input[CONF_REFRESH_TOKEN],
                     },
                 )
                 return self.async_create_entry(title="", data={})

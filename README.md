@@ -123,33 +123,16 @@ Each sensor includes additional attributes with detailed route information:
 
 ## Sporet Card
 
-A spimple card for Lovelace is included in sporet-card.js
+A Lovelace card for showing trail status lives in its own repository, so it can
+be installed straight from HACS:
 
-![newly prepped](assets/sporet-card-1.png)
-![not prepped - has floodlight](assets/sporet-card-2.png)
+**[Olen/lovelace-sporet-card](https://github.com/Olen/lovelace-sporet-card)**
 
+It shows how recently a trail was groomed, when it was last prepared, how long
+it is, and what it is groomed for - classic, skating, floodlit or snowmobile.
 
-The card can be configured from the GUI.
-
-To add the card manually, need to manually find the Device ID of a Slope.  
-The device ID can be found in the URL when you go into configuration of the Device:
-
-`https://your.ha.url/config/devices/device/0db129eb80c612a5bff671925fad7735` -
-here `0db129eb80c612a5bff671925fad7735` is the device id.
-
-```yaml
-type: custom:sporet.no-card
-device_id: 0db129eb80c612a5bff671925fad7735
-```
-
-Optionally control some features of the card
-```yaml
-tint_badges_with_primary_color: true
-show_badge_text: true
-floodlight_icon: mdi:light-flood-down
-
-```
-
+Add it in HACS via **Frontend > Custom repositories** with the category
+**Dashboard**, then pick a trail in the card editor.
 
 ## Updating Bearer Token
 

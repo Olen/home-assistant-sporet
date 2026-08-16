@@ -13,6 +13,11 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.const import CONF_NAME
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.selector import (
+    TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
+)
 
 from .const import (
     API_BASE_URL,
@@ -27,8 +32,17 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 # Shown in the setup and reauth forms. Kept out of the translation strings
-# because hassfest rejects URLs there.
-COPY_COMMAND = "copy(localStorage['oidc.user:https://login.sporet.no:geodata-public'])"
+# because hassfest rejects URLs there. Only the key name: a whole
+# `copy(localStorage[...])` line renders as a link in the dialog and turns out
+# to be awkward to select, so the forms point at the Local Storage view and the
+# README keeps the console one-liner.
+STORAGE_KEY = "oidc.user:"
+
+# The whole localStorage value is a few kilobytes of JSON, which a single-line
+# input will not take a paste of - so give it a text area.
+TOKEN_SELECTOR = TextSelector(
+    TextSelectorConfig(type=TextSelectorType.TEXT, multiline=True)
+)
 
 
 def parse_credentials(pasted: str) -> dict[str, str | None]:
@@ -173,14 +187,14 @@ class SporetConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             {
                 vol.Required(CONF_NAME, default="Sporet.no"): str,
                 # vol.Required(CONF_SLOPE_ID): str,
-                vol.Required(CONF_BEARER_TOKEN): str,
+                vol.Required(CONF_BEARER_TOKEN): TOKEN_SELECTOR,
             }
         )
 
         return self.async_show_form(
             step_id="user",
             data_schema=data_schema,
-            description_placeholders={"copy_command": COPY_COMMAND},
+            description_placeholders={"storage_key": STORAGE_KEY},
             errors=errors,
         )
 
@@ -224,8 +238,8 @@ class SporetConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="reauth_confirm",
-            data_schema=vol.Schema({vol.Required(CONF_BEARER_TOKEN): str}),
-            description_placeholders={"copy_command": COPY_COMMAND},
+            data_schema=vol.Schema({vol.Required(CONF_BEARER_TOKEN): TOKEN_SELECTOR}),
+            description_placeholders={"storage_key": STORAGE_KEY},
             errors=errors,
         )
 
@@ -287,7 +301,7 @@ class SporetOptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Required(
                     CONF_BEARER_TOKEN,
                     default=self.config_entry.data.get(CONF_BEARER_TOKEN, ""),
-                ): str,
+                ): TOKEN_SELECTOR,
             }
         )
 

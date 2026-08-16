@@ -3,14 +3,14 @@
     "step": {
       "user": {
         "title": "Set up Sporet",
-        "description": "Sign in at Sporet, then open the browser console (F12) and run `{copy_command}`. Paste the result below - it contains a refresh token, so this only has to be done once.",
+        "description": "Open sporet.no in a browser and sign in. Open the developer tools (F12), go to Application > Local Storage > sporet.no, click the row whose name starts with {storage_key}, and copy its value. Paste it below - it contains a refresh token, so this only has to be done once.",
         "data": {
           "bearer_token": "Bearer Token"
         }
       },
       "reauth_confirm": {
         "title": "Sign in to Sporet again",
-        "description": "The saved login is no longer valid. Sign in at Sporet, then open the browser console (F12) and run `{copy_command}`. Paste the result below - it contains a refresh token, so this only has to be done once.",
+        "description": "The saved login is no longer valid. Open sporet.no in a browser and sign in. Open the developer tools (F12), go to Application > Local Storage > sporet.no, click the row whose name starts with {storage_key}, and copy its value. Paste it below - it contains a refresh token, so this only has to be done once.",
         "data": {
           "bearer_token": "Bearer Token"
         }

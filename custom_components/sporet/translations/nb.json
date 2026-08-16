@@ -3,14 +3,14 @@
         "step": {
             "user": {
                 "title": "Sett opp Sporet",
-                "description": "Logg inn på Sporet, åpne konsollen i nettleseren (F12) og kjør `{copy_command}`. Lim inn resultatet under - det inneholder en refresh-token, så dette trenger du bare gjøre én gang.",
+                "description": "Åpne sporet.no i nettleseren og logg inn. Åpne utviklerverktøyet (F12), gå til Application > Local Storage > sporet.no, klikk raden som starter med {storage_key}, og kopier verdien. Lim den inn under - den inneholder en refresh-token, så dette trenger du bare gjøre én gang.",
                 "data": {
                     "bearer_token": "Bearer Token"
                 }
             },
             "reauth_confirm": {
                 "title": "Logg inn på Sporet igjen",
-                "description": "Den lagrede innloggingen er ikke gyldig lenger. Logg inn på Sporet, åpne konsollen i nettleseren (F12) og kjør `{copy_command}`. Lim inn resultatet under - det inneholder en refresh-token, så dette trenger du bare gjøre én gang.",
+                "description": "Den lagrede innloggingen er ikke gyldig lenger. Åpne sporet.no i nettleseren og logg inn. Åpne utviklerverktøyet (F12), gå til Application > Local Storage > sporet.no, klikk raden som starter med {storage_key}, og kopier verdien. Lim den inn under - den inneholder en refresh-token, så dette trenger du bare gjøre én gang.",
                 "data": {
                     "bearer_token": "Bearer Token"
                 }
